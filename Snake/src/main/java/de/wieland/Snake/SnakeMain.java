@@ -1,9 +1,5 @@
 package de.wieland.Snake;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -24,24 +20,22 @@ import javafx.stage.Stage;
  * @date 12.09.2021
  */
 public class SnakeMain extends Application {
-	private static final int WIDTH = 20;
-	private static final int HEIGHT = 20;
-	private static final int SNAKE_PIECE_SIZE = 25;
+	public static final int WIDTH = 20;
+	public static final int HEIGHT = 20;
+	public static final int SNAKE_PIECE_SIZE = 25;
+	public static final int SNAKE_START_SIZE = 3;
 	
-	private Random random = new Random();
-	
-	private int snakeSpeed = 5;
-	private List<SnakePiece> snakePieces = new ArrayList<>();
+	private Snake snake;
 	private Direction direction = Direction.NULL;
 	private boolean gameOver = false;
 	
-	private int foodX;
-	private int foodY;
-	private Color foodColor;
+	private Food food;
+	
+	private int score = 0;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		generateFood();
+		food = new Food();
 		
 		Group root = new Group();
 		Canvas canvas = new Canvas(WIDTH * SNAKE_PIECE_SIZE, HEIGHT * SNAKE_PIECE_SIZE);
@@ -54,9 +48,7 @@ public class SnakeMain extends Application {
 		Scene scene = new Scene(root, WIDTH * SNAKE_PIECE_SIZE, HEIGHT * SNAKE_PIECE_SIZE);
 		addControls(scene);
 		
-		snakePieces.add(new SnakePiece(WIDTH / 2, WIDTH / 2));
-		snakePieces.add(new SnakePiece(WIDTH / 2, WIDTH / 2));
-		snakePieces.add(new SnakePiece(WIDTH / 2, WIDTH / 2));
+		snake = new Snake();
 		
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Snake");
@@ -96,7 +88,7 @@ public class SnakeMain extends Application {
 					return;
 				}
 				
-				if (now - lastTick > 1000000000 / snakeSpeed) {
+				if (now - lastTick > 1000000000 / snake.getSpeed()) {
 					lastTick = now;
 					tick(gc);
 				}
@@ -112,37 +104,37 @@ public class SnakeMain extends Application {
 			return;
 		}
 		
-		for (int i = snakePieces.size() - 1; i >= 1; i--) {
-			snakePieces.get(i).setX(snakePieces.get(i - 1).getX());
-			snakePieces.get(i).setY(snakePieces.get(i - 1).getY());
+		for (int i = snake.getSnakePieces().size() - 1; i >= 1; i--) {
+			snake.getSnakePieces().get(i).setX(snake.getSnakePieces().get(i - 1).getX());
+			snake.getSnakePieces().get(i).setY(snake.getSnakePieces().get(i - 1).getY());
 		}
 		
 		switch (direction) {
 		case UP:
-			snakePieces.get(0).setY(snakePieces.get(0).getY() - 1);
-			if (snakePieces.get(0).getY() < 0) {
-				snakePieces.get(0).setY(HEIGHT);
+			snake.getSnakePieces().get(0).setY(snake.getSnakePieces().get(0).getY() - 1);
+			if (snake.getSnakePieces().get(0).getY() < 0) {
+				snake.getSnakePieces().get(0).setY(HEIGHT);
 				//gameOver = true;
 			}
 			break;
 		case DOWN:
-			snakePieces.get(0).setY(snakePieces.get(0).getY() + 1);
-			if (snakePieces.get(0).getY() > HEIGHT) {
-				snakePieces.get(0).setY(0);
+			snake.getSnakePieces().get(0).setY(snake.getSnakePieces().get(0).getY() + 1);
+			if (snake.getSnakePieces().get(0).getY() > HEIGHT) {
+				snake.getSnakePieces().get(0).setY(0);
 				//gameOver = true;
 			}
 			break;
 		case LEFT:
-			snakePieces.get(0).setX(snakePieces.get(0).getX() - 1);
-			if (snakePieces.get(0).getX() < 0) {
-				snakePieces.get(0).setX(WIDTH);
+			snake.getSnakePieces().get(0).setX(snake.getSnakePieces().get(0).getX() - 1);
+			if (snake.getSnakePieces().get(0).getX() < 0) {
+				snake.getSnakePieces().get(0).setX(WIDTH);
 				//gameOver = true;
 			}
 			break;
 		case RIGHT:
-			snakePieces.get(0).setX(snakePieces.get(0).getX() + 1);
-			if (snakePieces.get(0).getX() > WIDTH) {
-				snakePieces.get(0).setX(0);
+			snake.getSnakePieces().get(0).setX(snake.getSnakePieces().get(0).getX() + 1);
+			if (snake.getSnakePieces().get(0).getX() > WIDTH) {
+				snake.getSnakePieces().get(0).setX(0);
 				//gameOver = true;
 			}
 		default:
@@ -150,18 +142,20 @@ public class SnakeMain extends Application {
 		}
 		
 		//eat food
-		if (foodX == snakePieces.get(0).getX() &&
-			foodY == snakePieces.get(0).getY()) {
-			snakePieces.add(new SnakePiece(-1, -1));
-			generateFood();
+		if (food.getX() == snake.getSnakePieces().get(0).getX() &&
+			food.getY() == snake.getSnakePieces().get(0).getY()) {
+			snake.addSnakePiece();
+			food = new Food();
+			score++;
+			snake.increaseSpeed();
 			
 		}
 		
 		//self destroy
-		for (int i = 1; i < snakePieces.size(); i++) {
+		for (int i = 1; i < snake.getSnakePieces().size(); i++) {
 			if (direction != Direction.NULL &&
-				snakePieces.get(0).getX() == snakePieces.get(i).getX() &&
-				snakePieces.get(0).getY() == snakePieces.get(i).getY()) {
+				snake.getSnakePieces().get(0).getX() == snake.getSnakePieces().get(i).getX() &&
+				snake.getSnakePieces().get(0).getY() == snake.getSnakePieces().get(i).getY()) {
 				gameOver = true;
 			}
 		}
@@ -171,48 +165,21 @@ public class SnakeMain extends Application {
 		gc.fillRect(0, 0, WIDTH * SNAKE_PIECE_SIZE, HEIGHT * SNAKE_PIECE_SIZE);
 		
 		//food
-		gc.setFill(foodColor);
-		gc.fillOval(foodX * SNAKE_PIECE_SIZE, foodY * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
+		gc.setFill(food.getColor());
+		gc.fillOval(food.getX() * SNAKE_PIECE_SIZE, food.getY() * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
 		
 		//snake
-		for (int i = 0; i < snakePieces.size(); i++) {
-			gc.setFill(i == 0 ? Color.TOMATO : Color.GRAY);
-			gc.fillRect(snakePieces.get(i).getX() * SNAKE_PIECE_SIZE, snakePieces.get(i).getY() * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
+		for (int i = 0; i < snake.getSnakePieces().size(); i++) {
+			gc.setFill(snake.getSnakePieces().get(i).getColor());
+			gc.fillRect(snake.getSnakePieces().get(i).getX() * SNAKE_PIECE_SIZE, snake.getSnakePieces().get(i).getY() * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
 			gc.setStroke(Color.BLACK);
-			gc.fillRect(snakePieces.get(i).getX() * SNAKE_PIECE_SIZE, snakePieces.get(i).getY() * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
+			gc.fillRect(snake.getSnakePieces().get(i).getX() * SNAKE_PIECE_SIZE, snake.getSnakePieces().get(i).getY() * SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE, SNAKE_PIECE_SIZE);
 		}
 		
 		//score
 		gc.setFill(Color.BLACK);
 		gc.setFont(new Font(30));
-		gc.fillText("Score: " + (snakeSpeed - 6), 10, 30);
-	}
-
-	private void generateFood() {		
-		loop: while (true) {
-			foodX = random.nextInt(WIDTH);
-			foodY = random.nextInt(HEIGHT);
-			
-			for (SnakePiece snakePiece : snakePieces) {
-				if ((snakePiece.getX() == foodX) &&
-					(snakePiece.getY() == foodY)) {
-					continue loop;
-				}
-			}
-			
-			foodColor = randomColor();
-			snakeSpeed++;
-			break;
-		}
-	}
-
-	private Color randomColor() {
-		float r = random.nextFloat();
-		float g = random.nextFloat();
-		float b = random.nextFloat();
-		Color color = new Color(r, g, b, 1);
-		
-		return color;
+		gc.fillText("Score: " + score, 10, 30);
 	}
 
 	public static void main(String[] args) {

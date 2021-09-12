@@ -1,5 +1,7 @@
 package de.wieland.Snake;
 
+import javafx.scene.paint.Color;
+
 /**
  * Public class SnakePiece.
  * 
@@ -10,10 +12,20 @@ package de.wieland.Snake;
 public class SnakePiece {
 	private int x;
 	private int y;
+	private Color color;
 	
-	public SnakePiece(int x, int y) {
+	public SnakePiece(int x, int y, int positionInSnake) {
 		this.x = x;
 		this.y = y;
+		this.color = assignColor(positionInSnake);
+	}
+	
+	private Color assignColor(int positionInSnake) {
+		if (positionInSnake == 0) {
+			return Color.TOMATO;
+		} else {
+			return Color.GRAY;
+		}
 	}
 
 	/**
@@ -23,4 +35,5 @@ public class SnakePiece {
 	public void setX(int x) { this.x = x; }
 	public int getY() { return y; }
 	public void setY(int y) { this.y = y; }
+	public Color getColor() { return color; }
 }
