@@ -16,6 +16,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+/**
+ * Public class SnakeMain.
+ * 
+ * @author Moritz Wieland
+ * @version 1.0
+ * @date 12.09.2021
+ */
 public class SnakeMain extends Application {
 	private static final int WIDTH = 20;
 	private static final int HEIGHT = 20;
