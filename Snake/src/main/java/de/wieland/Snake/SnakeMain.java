@@ -51,6 +51,7 @@ public class SnakeMain extends Application {
 		
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Snake");
+		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
 	
