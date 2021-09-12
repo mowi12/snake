@@ -23,10 +23,16 @@ public class Snake {
 		}
 	}
 
+	/**
+	 * Public void addSnakePiece adds one new snake piece to the current snake.
+	 */
 	public void addSnakePiece() {
 		snakePieces.add(new SnakePiece(-1, -1, snakePieces.size()));
 	}
 	
+	/**
+	 * Public void increaseSpeed increases the speed.
+	 */
 	public void increaseSpeed() {
 		this.speed++;
 	}

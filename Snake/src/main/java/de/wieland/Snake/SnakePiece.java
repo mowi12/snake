@@ -20,6 +20,12 @@ public class SnakePiece {
 		this.color = assignColor(positionInSnake);
 	}
 	
+	/**
+	 * Private Color assignColor assigns every snake piece its correct color.
+	 * 
+	 * @param positionInSnake represents the position in the snake
+	 * @return Color which is being assigned
+	 */
 	private Color assignColor(int positionInSnake) {
 		if (positionInSnake == 0) {
 			return Color.TOMATO;

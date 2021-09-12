@@ -27,10 +27,21 @@ public class Food {
 		this.color = randomColor();
 	}
 
+	/**
+	 * Private int randomValue creates a randomValue between 0 and the given bound.
+	 * 
+	 * @param bound given bound
+	 * @return random value between 0 and bound
+	 */
 	private int randomValue(int bound) {
 		return random.nextInt(bound);
 	}
 	
+	/**
+	 * Private Color randomColor creates a random color.
+	 * 
+	 * @return random created color
+	 */
 	private Color randomColor() {
 		float r = random.nextFloat();
 		float g = random.nextFloat();
