@@ -25,7 +25,7 @@ public class SnakeMain extends Application {
 	
 	private int snakeSpeed = 5;
 	private List<SnakePiece> snakePieces = new ArrayList<>();
-	private Direction direction = Direction.LEFT;
+	private Direction direction = Direction.NULL;
 	private boolean gameOver = false;
 	
 	private int foodX;
@@ -152,7 +152,8 @@ public class SnakeMain extends Application {
 		
 		//self destroy
 		for (int i = 1; i < snakePieces.size(); i++) {
-			if (snakePieces.get(0).getX() == snakePieces.get(i).getX() &&
+			if (direction != Direction.NULL &&
+				snakePieces.get(0).getX() == snakePieces.get(i).getX() &&
 				snakePieces.get(0).getY() == snakePieces.get(i).getY()) {
 				gameOver = true;
 			}
